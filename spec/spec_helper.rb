@@ -15,16 +15,23 @@ end
 
 GitGoggles.root_dir = '/tmp/git_goggles'
 
-def create_repo(name)
+def create_repo(name, options = {})
+  commit_msg = options.fetch(:commit_msg, 'test commit')
+  user_name = options.fetch(:user_name, 'Bob')
+  user_email = options.fetch(:user_email, 'bob@foo.com')
+
   path = File.join(GitGoggles.root_dir, name)
   FileUtils.mkdir_p(path)
-  FileUtils.touch(path+"/testfile")
+  FileUtils.touch(path+'/testfile')
 
   Dir.chdir(path) do
     repo = Grit::Repo.init(path)
-    repo.add(path+"/testfile")
-    repo.commit_index("test commit")
+
+    repo.config['user.name'] = user_name
+    repo.config['user.email'] = user_email
+
+    repo.add(path+'/testfile')
+    repo.commit_index(commit_msg)
     `rm testfile && mv .git/* . && rm -rf .git/`
   end
-
 end

@@ -28,7 +28,7 @@ describe GitGoggles::App do
   end
 
   describe 'GET /repository/:name' do
-    it 'returns a 404 if a respository is not found' do
+    it 'returns a 404 if a repository is not found' do
       get '/repository/bad_repo'
 
       last_response.status.should == 404
@@ -42,6 +42,22 @@ describe GitGoggles::App do
       last_response.status.should == 200
       last_response.content_type.should match('application/json')
       last_response.body.should == "{\"name\":\"foo\",\"branches\":[\"master\"]}"
+    end
+  end
+
+  describe 'GET /repository/:name/commits' do
+    it 'returns a list of commits as JSON' do
+      create_repo('foo', :commit_msg => 'my fake commit')
+
+      get '/repository/foo/commits'
+
+      last_response.status.should == 200
+      last_response.content_type.should match('application/json')
+
+      commits = JSON.parse(last_response.body)
+
+      commits.length.should == 1
+      commits.first['message'].should == 'my fake commit'
     end
   end
 end

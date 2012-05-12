@@ -19,5 +19,11 @@ module GitGoggles
         [404, "Repository #{params[:name]} not found"]
       end
     end
+
+    get '/repository/:name/commits' do
+      repository = GitGoggles::Repository.new(params[:name])
+      content_type :json
+      repository.commits.to_json
+    end
   end
 end

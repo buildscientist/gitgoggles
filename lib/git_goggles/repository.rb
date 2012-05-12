@@ -4,6 +4,20 @@ module GitGoggles
       @name = name
     end
 
+    def commits
+      output = []
+
+      _repo.commits.each do |commit|
+        output << {
+          :author => "#{commit.author.name} <#{commit.author.email}>",
+          :message => commit.message,
+          :sha => commit.id
+        }
+      end
+
+      output
+    end
+
     def exists?
       File.exists?(_path)
     end
