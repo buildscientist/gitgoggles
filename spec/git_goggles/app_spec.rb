@@ -66,4 +66,31 @@ describe GitGoggles::App do
       last_response.status.should == 404
     end
   end
+
+  describe 'GET /repository/:name/commit/:sha' do
+    it 'returns commit detail as JSON' do
+      repo = create_repo('foo', :commit_msg => 'my fake commit')
+
+      get "/repository/foo/commit/#{repo.commits.first.id}"
+
+      last_response.status.should == 200
+      last_response.content_type.should match('application/json')
+
+      commit = JSON.parse(last_response.body)
+
+      commit['author'].should == 'Bob <bob@foo.com>'
+      commit['diffs'].should be_kind_of(Array)
+      commit['date'].should be_kind_of(String)
+      commit['date'].length.should > 0
+      commit['message'].should == 'my fake commit'
+    end
+
+    it 'returns 404 if the commit does not exist' do
+      repo = create_repo('foo')
+
+      get "/repository/foo/commit/badsha"
+
+      last_response.status.should == 404
+    end
+  end
 end

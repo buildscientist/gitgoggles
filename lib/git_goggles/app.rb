@@ -26,6 +26,15 @@ module GitGoggles
         content_type :json
         @repository.commits.to_json
       end
+
+      get '/commit/:sha' do
+        if @repository.commits.any? { |c| c[:sha] == params[:sha] }
+          content_type :json
+          @repository.commit(params[:sha]).to_json
+        else
+          [404, "Commit #{params[:sha]} not found in repository #{params[:name]} not found"]
+        end
+      end
     end
   end
 end

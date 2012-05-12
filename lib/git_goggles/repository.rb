@@ -18,6 +18,16 @@ module GitGoggles
       output
     end
 
+    def commit(sha)
+      commit = _repo.commit(sha)
+      {
+        :author => "#{commit.author.name} <#{commit.author.email}>",
+        :message => commit.message,
+        :date => commit.date,
+        :diffs => commit.diffs.map(&:diff)
+      }
+    end
+
     def exists?
       File.exists?(_path)
     end
