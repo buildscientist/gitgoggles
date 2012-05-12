@@ -59,5 +59,11 @@ describe GitGoggles::App do
       commits.length.should == 1
       commits.first['message'].should == 'my fake commit'
     end
+
+    it 'returns a list of commits as JSON' do
+      get '/repository/bad_repo/commits'
+
+      last_response.status.should == 404
+    end
   end
 end
