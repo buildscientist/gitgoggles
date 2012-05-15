@@ -23,7 +23,12 @@ describe GitGoggles::App do
 
       last_response.status.should == 200
       last_response.content_type.should match('application/json')
-      last_response.body.should == "{\"repositories\":[\"rails\",\"web2py\",\"riak\"]}"
+
+      repositories = JSON.parse(last_response.body)
+
+      repositories['repositories'].should include('riak')
+      repositories['repositories'].should include('web2py')
+      repositories['repositories'].should include('rails')
     end
   end
 
@@ -41,7 +46,11 @@ describe GitGoggles::App do
 
       last_response.status.should == 200
       last_response.content_type.should match('application/json')
-      last_response.body.should == "{\"name\":\"foo\",\"branches\":[\"master\"]}"
+
+      repository = JSON.parse(last_response.body)
+
+      repository['name'].should == 'foo'
+      repository['branches'].should include('master')
     end
   end
 
