@@ -22,18 +22,44 @@ module GitGoggles
         @repository.to_json
       end
 
-      get '/commits' do
-        content_type :json
-        @repository.commits.to_json
+      namespace '/commits' do
+        get do
+          content_type :json
+          @repository.commits.to_json
+        end
+
+        get '/:sha' do
+          if @repository.commits.any? { |c| c[:sha] == params[:sha] }
+            content_type :json
+            @repository.commit(params[:sha]).to_json
+          else
+            [404, "Commit #{params[:sha]} not found in repository #{params[:name]} not found"]
+          end
+        end
       end
 
-      get '/commit/:sha' do
-        if @repository.commits.any? { |c| c[:sha] == params[:sha] }
-          content_type :json
-          @repository.commit(params[:sha]).to_json
-        else
-          [404, "Commit #{params[:sha]} not found in repository #{params[:name]} not found"]
-        end
+      get '/tags' do
+        [501, 'Todo']
+      end
+
+      get '/tag/:tag' do
+        [501, 'Todo']
+      end
+
+      get '/branches' do
+        [501, 'Todo']
+      end
+
+      get '/branch/:branch' do
+        [501, 'Todo']
+      end
+
+      get '/branches' do
+        [501, 'Todo']
+      end
+
+      get '/branch/:branch' do
+        [501, 'Todo']
       end
     end
   end
