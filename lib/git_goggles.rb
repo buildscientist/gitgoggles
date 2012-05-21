@@ -1,5 +1,6 @@
 require 'json'
 require 'sinatra/base'
+require 'sinatra/namespace'
 require 'grit'
 
 require 'git_goggles/app'

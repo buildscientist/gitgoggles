@@ -34,4 +34,5 @@ def create_repo(name, options = {})
     repo.commit_index(commit_msg)
     `rm testfile && mv .git/* . && rm -rf .git/`
   end
+  Grit::Repo.new(path, {:is_bare => true})
 end

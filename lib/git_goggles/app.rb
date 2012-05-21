@@ -1,5 +1,7 @@
 module GitGoggles
   class App < Sinatra::Base
+    register Sinatra::Namespace
+
     get '/' do
       'Hello world'
     end
@@ -9,21 +11,53 @@ module GitGoggles
       {:repositories => GitGoggles.repositories}.to_json
     end
 
-    get '/repository/:name' do
-      repository = GitGoggles::Repository.new(params[:name])
-
-      if repository.exists?
-        content_type :json
-        repository.to_json
-      else
-        [404, "Repository #{params[:name]} not found"]
+    namespace '/repository/:name' do
+      before do
+        @repository = GitGoggles::Repository.new(params[:name])
+        halt 404, "Repository #{params[:name]} not found" unless @repository.exists?
       end
-    end
 
-    get '/repository/:name/commits' do
-      repository = GitGoggles::Repository.new(params[:name])
-      content_type :json
-      repository.commits.to_json
+      get do
+        content_type :json
+        @repository.to_json
+      end
+
+      get '/commits' do
+        content_type :json
+        @repository.commits.to_json
+      end
+
+      get '/commit/:sha' do
+        commit = @repository.commit(params[:sha])
+        halt 404, "Commit #{params[:sha]} not found" if commit.nil?
+
+        content_type :json
+        commit.to_json
+      end
+
+      get '/tags' do
+        [501, 'Todo']
+      end
+
+      get '/tag/:tag' do
+        [501, 'Todo']
+      end
+
+      get '/branches' do
+        [501, 'Todo']
+      end
+
+      get '/branch/:branch' do
+        [501, 'Todo']
+      end
+
+      get '/branches' do
+        [501, 'Todo']
+      end
+
+      get '/branch/:branch' do
+        [501, 'Todo']
+      end
     end
   end
 end
