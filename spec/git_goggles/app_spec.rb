@@ -78,10 +78,6 @@ describe GitGoggles::App do
 
       commit = JSON.parse(last_response.body)
 
-      commit['author'].should == 'Bob <bob@foo.com>'
-      commit['diffs'].should be_kind_of(Array)
-      commit['date'].should be_kind_of(String)
-      commit['date'].length.should > 0
       commit['message'].should == 'my fake commit'
     end
 

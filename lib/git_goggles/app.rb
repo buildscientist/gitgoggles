@@ -22,20 +22,17 @@ module GitGoggles
         @repository.to_json
       end
 
-      namespace '/commits' do
-        get do
-          content_type :json
-          @repository.commits.to_json
-        end
+      get '/commits' do
+        content_type :json
+        @repository.commits.to_json
+      end
 
-        get '/:sha' do
-          if @repository.commits.any? { |c| c[:sha] == params[:sha] }
-            content_type :json
-            @repository.commit(params[:sha]).to_json
-          else
-            [404, "Commit #{params[:sha]} not found in repository #{params[:name]} not found"]
-          end
-        end
+      get '/commit/:sha' do
+        commit = @repository.commit(params[:sha])
+        halt 404, "Commit #{params[:sha]} not found" if commit.nil?
+
+        content_type :json
+        commit.to_json
       end
 
       get '/tags' do

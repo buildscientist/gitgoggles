@@ -27,6 +27,31 @@ describe GitGoggles::Repository do
     end
   end
 
+  describe "#commit" do
+    it 'returns nil when the commit is not found' do
+      repo = create_repo('foo')
+
+      GitGoggles::Repository.new('foo').commit('bad_sha').should be_nil
+    end
+
+    it 'returns a commit object' do
+      repo = create_repo('foo',
+        :commit_msg => 'my commit',
+        :user_name => 'Bob',
+        :user_email => 'bob@foo.com'
+      )
+
+      repository = GitGoggles::Repository.new('foo')
+      commit = repository.commit(repo.commits.first.sha)
+
+      commit[:author].should == 'Bob <bob@foo.com>'
+      commit[:diffs].should be_kind_of(Array)
+      commit[:date].should be_kind_of(String)
+      commit[:date].length.should > 0
+      commit[:message].should == 'my commit'
+    end
+  end
+
   describe '#to_json' do
     it 'returns itself as json' do
       create_repo('foo')

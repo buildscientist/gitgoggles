@@ -19,13 +19,14 @@ module GitGoggles
     end
 
     def commit(sha)
-      commit = _repo.commit(sha)
-      {
-        :author => "#{commit.author.name} <#{commit.author.email}>",
-        :message => commit.message,
-        :date => commit.date,
-        :diffs => commit.diffs.map(&:diff)
-      }
+      if commit = _repo.commit(sha)
+        {
+          :author => "#{commit.author.name} <#{commit.author.email}>",
+          :message => commit.message,
+          :date => commit.date.to_s,
+          :diffs => commit.diffs.map(&:diff)
+        }
+      end
     end
 
     def exists?
