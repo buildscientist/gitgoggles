@@ -1,0 +1,6 @@
+#!/usr/bin/env ruby
+
+require 'git_goggles'
+require 'git_goggles/cli'
+
+GitGoggles::CLI.new.start
