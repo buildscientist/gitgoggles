@@ -33,6 +33,10 @@ module GitGoggles
       File.exists?(_path)
     end
 
+    def tags
+      _repo.tags.map(&:name)
+    end
+
     def to_json
       {
         :name => @name,

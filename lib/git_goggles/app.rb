@@ -36,7 +36,8 @@ module GitGoggles
       end
 
       get '/tags' do
-        [501, 'Todo']
+        content_type :json
+        @repository.tags.to_json
       end
 
       get '/tag/:tag' do

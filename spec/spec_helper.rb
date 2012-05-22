@@ -19,6 +19,7 @@ def create_repo(name, options = {})
   commit_msg = options.fetch(:commit_msg, 'test commit')
   user_name = options.fetch(:user_name, 'Bob')
   user_email = options.fetch(:user_email, 'bob@foo.com')
+  tags = options.fetch(:tags, [])
 
   path = File.join(GitGoggles.root_dir, name)
   FileUtils.mkdir_p(path)
@@ -32,6 +33,8 @@ def create_repo(name, options = {})
 
     repo.add(path+'/testfile')
     repo.commit_index(commit_msg)
+    tags.each { |tag| `git tag #{tag}` }
+
     `rm testfile && mv .git/* . && rm -rf .git/`
   end
   Grit::Repo.new(path, {:is_bare => true})

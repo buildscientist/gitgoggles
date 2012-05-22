@@ -60,4 +60,13 @@ describe GitGoggles::Repository do
       repository.to_json.should == '{"name":"foo","branches":["master"]}'
     end
   end
+
+  describe '#tags' do
+    it 'returns an array of tags' do
+      create_repo('foo', :tags => ['0.0.1'])
+      repository = GitGoggles::Repository.new('foo')
+
+      repository.tags.should include('0.0.1')
+    end
+  end
 end
