@@ -41,7 +41,11 @@ module GitGoggles
       end
 
       get '/tag/:tag' do
-        [501, 'Todo']
+        tag = @repository.tag(params[:tag])
+        halt 404, "Tag #{params[:tag]} not found" if tag.nil?
+
+        content_type :json
+        tag.to_json
       end
 
       get '/branches' do

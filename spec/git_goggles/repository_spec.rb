@@ -69,4 +69,22 @@ describe GitGoggles::Repository do
       repository.tags.should include('0.0.1')
     end
   end
+
+  describe '#tag' do
+    it 'returns an array of tags' do
+      repo = create_repo('foo', :tags => ['0.0.1'])
+      repository = GitGoggles::Repository.new('foo')
+      tag = repository.tag('0.0.1')
+
+      tag[:name].should == '0.0.1'
+      tag[:commit].should == repo.commits.first.sha
+    end
+
+    it 'returns nil for a tag not found' do
+      repo = create_repo('foo')
+      repository = GitGoggles::Repository.new('foo')
+
+      repository.tag('badtag').should be_nil
+    end
+  end
 end

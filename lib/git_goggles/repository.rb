@@ -37,6 +37,15 @@ module GitGoggles
       _repo.tags.map(&:name)
     end
 
+    def tag(tag_name)
+      if tag = _repo.tags.find { |tag| tag.name == tag_name }
+        {
+          :name => tag.name,
+          :commit => tag.commit.sha
+        }
+      end
+    end
+
     def to_json
       {
         :name => @name,

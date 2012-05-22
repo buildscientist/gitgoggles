@@ -125,4 +125,27 @@ describe GitGoggles::App do
       tags.should be_empty
     end
   end
+
+  describe 'GET /repository/:name/tag/:tag' do
+    it 'returns a JSON object for a tag' do
+      create_repo('foo', :tags => ['0.0.1'])
+
+      get '/repository/foo/tag/0.0.1'
+
+      last_response.status.should == 200
+      last_response.content_type.should match('application/json')
+
+      tag = JSON.parse(last_response.body)
+
+      tag['name'].should == '0.0.1'
+    end
+
+    it 'returns a 404 for a tag not found' do
+      create_repo('foo')
+
+      get '/repository/foo/tag/badtag'
+
+      last_response.status.should == 404
+    end
+  end
 end
