@@ -49,20 +49,19 @@ module GitGoggles
       end
 
       get '/branches' do
-        [501, 'Todo']
+	content_type :json
+	@repository.branches.to_json
       end
 
       get '/branch/:branch' do
-        [501, 'Todo']
+        branch = @repository.branch(params[:branch])
+        halt 404, "Branch #{params[:branch]} not found" if branch.nil?
+
+        content_type :json
+        branch.to_json
+
       end
 
-      get '/branches' do
-        [501, 'Todo']
-      end
-
-      get '/branch/:branch' do
-        [501, 'Todo']
-      end
     end
   end
 end

@@ -4,6 +4,20 @@ module GitGoggles
       @name = name
     end
 
+    def branches
+	_repo.branches.map(&:name)
+    end    
+
+    def branch(branch_name)
+      if tag = _repo.branches.find { |branch| branch.name == branch_name }
+        {
+          :name => branch.name,
+          :commit => branch.commit.sha
+        }
+      end
+    end
+
+
     def commits
       output = []
 
