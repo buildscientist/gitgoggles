@@ -31,7 +31,7 @@ def create_repo(name, options = {})
     repo.config['user.name'] = user_name
     repo.config['user.email'] = user_email
 
-    repo.add(path+'/testfile')
+    repo.add('testfile')
     repo.commit_index(commit_msg)
     tags.each { |tag| `git tag #{tag}` }
 
