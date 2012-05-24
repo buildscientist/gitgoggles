@@ -200,4 +200,74 @@ describe GitGoggles::App do
       last_response.content_type.should match('application/json')
     end
   end
+
+  describe 'GET /repository/:name/branches' do
+    it 'returns a JSON array of branches' do
+      create_repo('foo', :branches => ['master', 'release'])
+
+      get '/repository/foo/branches'
+
+      last_response.status.should == 200
+      last_response.content_type.should match('application/json')
+
+      branches = JSON.parse(last_response.body)
+
+      branches.should include('master')
+      branches.should include('release')
+    end
+
+    it 'returns an empty JSON array for no branches' do
+      create_repo('foo', :commit => false)
+
+      get '/repository/foo/branches'
+
+      last_response.status.should == 200
+      last_response.content_type.should match('application/json')
+
+      branches = JSON.parse(last_response.body)
+
+      branches.should be_empty
+    end
+
+    it 'matches with or without a trailing slash' do
+      create_repo('foo')
+
+      get '/repository/foo/branches/'
+
+      last_response.status.should == 200
+      last_response.content_type.should match('application/json')
+    end
+  end
+
+  describe 'GET /repository/:name/branch/:branch_name' do
+    it 'returns a 404 if a branch is not found' do
+      create_repo('foo')
+
+      get '/repository/foo/branch/badbranch'
+
+      last_response.status.should == 404
+    end
+
+    it 'returns the branch as JSON' do
+      create_repo('foo', :branches => ['master'])
+
+      get '/repository/foo/branch/master'
+
+      last_response.status.should == 200
+      last_response.content_type.should match('application/json')
+
+      branch = JSON.parse(last_response.body)
+
+      branch['name'].should == 'master'
+    end
+
+    it 'matches with or without a trailing slash' do
+      create_repo('foo', :branches => ['master'])
+
+      get '/repository/foo/branch/master/'
+
+      last_response.status.should == 200
+      last_response.content_type.should match('application/json')
+    end
+  end
 end

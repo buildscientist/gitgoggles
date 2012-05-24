@@ -1,17 +1,37 @@
 require 'spec_helper'
 
 describe GitGoggles::Repository do
-  describe '#exists?' do
-    it 'is true if the repo exists inside the root_dir' do
-      create_repo('foo')
+
+  describe '#branches' do
+    it 'returns an array of branches' do
+      create_repo('foo', :branches => ['master', 'release'])
+
       repository = GitGoggles::Repository.new('foo')
 
-      repository.exists?.should be_true
+      repository.branches.should include('master')
+      repository.branches.should include('release')
+    end
+  end
+
+  describe '#branch' do
+    it 'returns a hash of a branch' do
+      repo = create_repo('foo', :branches => ['master'])
+
+      branch = GitGoggles::Repository.new('foo').branch('master')
+
+      branch[:name].should == 'master'
+      branch[:latest_commit].should == repo.commits.last.sha
+    end
+
+    it 'returns nil for an unknown branch' do
+      repo = create_repo('foo')
+
+      GitGoggles::Repository.new('foo').branch('badbranch').should be_nil
     end
   end
 
   describe "#commits" do
-    it 'returns a array of commit objects' do
+    it 'returns an array of commit objects' do
       create_repo('foo',
         :commit_msg => 'my commit',
         :user_name => 'Bob',
@@ -49,6 +69,15 @@ describe GitGoggles::Repository do
       commit[:date].should be_kind_of(String)
       commit[:date].length.should > 0
       commit[:message].should == 'my commit'
+    end
+  end
+
+  describe '#exists?' do
+    it 'is true if the repo exists inside the root_dir' do
+      create_repo('foo')
+      repository = GitGoggles::Repository.new('foo')
+
+      repository.exists?.should be_true
     end
   end
 
