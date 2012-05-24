@@ -6,12 +6,12 @@ module GitGoggles
       'Hello world'
     end
 
-    get '/repositories' do
+    get '/repositories/?' do
       content_type :json
       {:repositories => GitGoggles.repositories}.to_json
     end
 
-    namespace '/repository/:name' do
+    namespace '/repository/:name/?' do
       before do
         @repository = GitGoggles::Repository.new(params[:name])
         halt 404, "Repository #{params[:name]} not found" unless @repository.exists?
@@ -22,12 +22,12 @@ module GitGoggles
         @repository.to_json
       end
 
-      get '/commits' do
+      get '/commits/?' do
         content_type :json
         @repository.commits.to_json
       end
 
-      get '/commit/:sha' do
+      get '/commit/:sha/?' do
         commit = @repository.commit(params[:sha])
         halt 404, "Commit #{params[:sha]} not found" if commit.nil?
 
@@ -35,12 +35,12 @@ module GitGoggles
         commit.to_json
       end
 
-      get '/tags' do
+      get '/tags/?' do
         content_type :json
         @repository.tags.to_json
       end
 
-      get '/tag/:tag' do
+      get '/tag/:tag/?' do
         tag = @repository.tag(params[:tag])
         halt 404, "Tag #{params[:tag]} not found" if tag.nil?
 
