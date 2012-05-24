@@ -37,6 +37,17 @@ describe GitGoggles::App do
       last_response.status.should == 200
       last_response.content_type.should match('application/json')
     end
+
+    it 'returns a JSON list of repositories' do
+      create_repo('foo')
+
+      get '/repositories?callback=bar'
+
+      last_response.status.should == 200
+      last_response.content_type.should match('text/javascript')
+      last_response.body.should == 'bar({"repositories":["foo"]});'
+    end
+
   end
 
   describe 'GET /repository/:name' do

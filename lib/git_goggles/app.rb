@@ -47,8 +47,16 @@ module GitGoggles
 
     def json(type, object)
       halt 404, "#{type.to_s.capitalize} not found" if object.nil?
-      content_type :json
-      object.to_json
+
+      json = object.to_json
+
+      if params[:callback]
+        content_type 'text/javascript'
+        "#{params[:callback]}(#{json});"
+      else
+        content_type :json
+        json
+      end
     end
   end
 end
