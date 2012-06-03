@@ -5,18 +5,17 @@ module GitGoggles
     end
 
     def branches
-	_repo.branches.map(&:name)
-    end    
+      _repo.branches.map(&:name)
+    end
 
     def branch(branch_name)
-      if tag = _repo.branches.find { |branch| branch.name == branch_name }
+      if branch = _repo.branches.find { |branch| branch.name == branch_name }
         {
           :name => branch.name,
-          :commit => branch.commit.sha
+          :latest_commit => branch.commit.sha
         }
       end
     end
-
 
     def commits
       output = []

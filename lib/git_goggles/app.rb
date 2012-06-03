@@ -7,8 +7,7 @@ module GitGoggles
     end
 
     get '/repositories/?' do
-      content_type :json
-      {:repositories => GitGoggles.repositories}.to_json
+      json(:repositories, {:repositories => GitGoggles.repositories})
     end
 
     namespace '/repository/:name/?' do
@@ -18,48 +17,45 @@ module GitGoggles
       end
 
       get do
-        content_type :json
-        @repository.to_json
+        json(:repository, @repository)
       end
 
       get '/commits/?' do
-        content_type :json
-        @repository.commits.to_json
+        json(:commits, @repository.commits)
       end
 
       get '/commit/:sha/?' do
-        commit = @repository.commit(params[:sha])
-        halt 404, "Commit #{params[:sha]} not found" if commit.nil?
-
-        content_type :json
-        commit.to_json
+        json(:commit, @repository.commit(params[:sha]))
       end
 
       get '/tags/?' do
-        content_type :json
-        @repository.tags.to_json
+        json(:tags, @repository.tags)
       end
 
       get '/tag/:tag/?' do
-        tag = @repository.tag(params[:tag])
-        halt 404, "Tag #{params[:tag]} not found" if tag.nil?
-
-        content_type :json
-        tag.to_json
+        json(:tag, @repository.tag(params[:tag]))
       end
 
       get '/branches/?' do
-	content_type :json
-	@repository.branches.to_json
+        json(:branches, @repository.branches)
       end
 
       get '/branch/:branch/?' do
-        branch = @repository.branch(params[:branch])
-        halt 404, "Branch #{params[:branch]} not found" if branch.nil?
+        json(:branch, @repository.branch(params[:branch]))
+      end
+    end
 
+    def json(type, object)
+      halt 404, "#{type.to_s.capitalize} not found" if object.nil?
+
+      json = object.to_json
+
+      if params[:callback]
+        content_type 'text/javascript'
+        "#{params[:callback]}(#{json});"
+      else
         content_type :json
-        branch.to_json
-
+        json
       end
 
     end

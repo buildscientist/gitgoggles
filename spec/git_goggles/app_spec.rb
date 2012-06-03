@@ -30,6 +30,24 @@ describe GitGoggles::App do
       repositories['repositories'].should include('web2py')
       repositories['repositories'].should include('rails')
     end
+
+    it 'matches with or without a trailing slash' do
+      get '/repositories/'
+
+      last_response.status.should == 200
+      last_response.content_type.should match('application/json')
+    end
+
+    it 'returns a JSON list of repositories' do
+      create_repo('foo')
+
+      get '/repositories?callback=bar'
+
+      last_response.status.should == 200
+      last_response.content_type.should match('text/javascript')
+      last_response.body.should == 'bar({"repositories":["foo"]});'
+    end
+
   end
 
   describe 'GET /repository/:name' do
@@ -51,6 +69,15 @@ describe GitGoggles::App do
 
       repository['name'].should == 'foo'
       repository['branches'].should include('master')
+    end
+
+    it 'matches with or without a trailing slash' do
+      create_repo('foo')
+
+      get '/repository/foo/'
+
+      last_response.status.should == 200
+      last_response.content_type.should match('application/json')
     end
   end
 
@@ -74,6 +101,15 @@ describe GitGoggles::App do
 
       last_response.status.should == 404
     end
+
+    it 'matches with or without a trailing slash' do
+      create_repo('foo')
+
+      get '/repository/foo/commits/'
+
+      last_response.status.should == 200
+      last_response.content_type.should match('application/json')
+    end
   end
 
   describe 'GET /repository/:name/commit/:sha' do
@@ -94,6 +130,15 @@ describe GitGoggles::App do
       get '/repository/foo/commit/badsha'
 
       last_response.status.should == 404
+    end
+
+    it 'matches with or without a trailing slash' do
+      repo = create_repo('foo', :commit_msg => 'my fake commit')
+
+      get "/repository/foo/commit/#{repo.commits.first.id}/"
+
+      last_response.status.should == 200
+      last_response.content_type.should match('application/json')
     end
   end
 
@@ -124,6 +169,15 @@ describe GitGoggles::App do
 
       tags.should be_empty
     end
+
+    it 'matches with or without a trailing slash' do
+      create_repo('foo')
+
+      get '/repository/foo/tags/'
+
+      last_response.status.should == 200
+      last_response.content_type.should match('application/json')
+    end
   end
 
   describe 'GET /repository/:name/tag/:tag' do
@@ -146,6 +200,85 @@ describe GitGoggles::App do
       get '/repository/foo/tag/badtag'
 
       last_response.status.should == 404
+    end
+
+    it 'matches with or without a trailing slash' do
+      create_repo('foo', :tags => ['0.0.1'])
+
+      get '/repository/foo/tag/0.0.1/'
+
+      last_response.status.should == 200
+      last_response.content_type.should match('application/json')
+    end
+  end
+
+  describe 'GET /repository/:name/branches' do
+    it 'returns a JSON array of branches' do
+      create_repo('foo', :branches => ['master', 'release'])
+
+      get '/repository/foo/branches'
+
+      last_response.status.should == 200
+      last_response.content_type.should match('application/json')
+
+      branches = JSON.parse(last_response.body)
+
+      branches.should include('master')
+      branches.should include('release')
+    end
+
+    it 'returns an empty JSON array for no branches' do
+      create_repo('foo', :commit => false)
+
+      get '/repository/foo/branches'
+
+      last_response.status.should == 200
+      last_response.content_type.should match('application/json')
+
+      branches = JSON.parse(last_response.body)
+
+      branches.should be_empty
+    end
+
+    it 'matches with or without a trailing slash' do
+      create_repo('foo')
+
+      get '/repository/foo/branches/'
+
+      last_response.status.should == 200
+      last_response.content_type.should match('application/json')
+    end
+  end
+
+  describe 'GET /repository/:name/branch/:branch_name' do
+    it 'returns a 404 if a branch is not found' do
+      create_repo('foo')
+
+      get '/repository/foo/branch/badbranch'
+
+      last_response.status.should == 404
+    end
+
+    it 'returns the branch as JSON' do
+      create_repo('foo', :branches => ['master'])
+
+      get '/repository/foo/branch/master'
+
+      last_response.status.should == 200
+      last_response.content_type.should match('application/json')
+
+      branch = JSON.parse(last_response.body)
+
+      branch['name'].should == 'master'
+    end
+
+    it 'matches with or without a trailing slash' do
+      create_repo('foo', :branches => ['master'])
+
+      get '/repository/foo/branch/master/'
+
+      last_response.status.should == 200
+      last_response.content_type.should match('application/json')
     end
   end
 end
