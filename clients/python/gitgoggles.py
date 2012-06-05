@@ -39,39 +39,45 @@ class GitGoggles(object):
             error = "Invalid URL (%s) or connection timeout. Check Service URL" %(self.service_url)
             raise RuntimeError(error)
              
-            
+    'GET /repositories'        
     def get_all_repositories(self):
         url = string.join([self.service_url,self.repositories_uri],'/')
         return requests.get(url).json
     
+    'GET /repository'
     def get_repository_tree(self,repository):
-        url = string.join([self.service_url,self.repository_uri],repository,'/')
-        return requests.get(url)
+        url = string.join([self.service_url,self.repository_uri,repository],'/')
+        return requests.get(url).json
         
-    
+    'GET /repository/{repository_name}/commits'
     def get_repository_commits(self,repository):
         url = string.join([self.service_url,self.repository_uri,repository,self.commits_uri],'/')
-        return requests.get(url)
+        return requests.get(url).json
     
+    'GET /repository/{repository_name}/commit/{revision}'
     def get_repository_revisions(self,repository,revision):
-        url = string.join(self.service_url,self.repository_uri,repository,self.commit_uri,revision,'/')
-        return requests.get(url)
-    
+        url = string.join([self.service_url,self.repository_uri,repository,self.commit_uri,revision],'/')
+        return requests.get(url).json
+   
+    'GET /repository/{repository_name}/tags'
     def get_repository_tags(self, repository):
-        url = string.join(self.service_url,self.repository_uri,repository,self.tags_uri,'/')
-        return requests.get(url)
+        url = string.join([self.service_url,self.repository_uri,repository,self.tags_uri],'/')
+        return requests.get(url).json
     
+    'GET /repository/{repository_name}/tag/{tag_name}'
     def get_tag_base(self,repository,tag):
-        url = string.join(self.service_url,self.repository_uri,repository,self.tag_uri,tag,'/')
-        return requests.get(url)
+        url = string.join([self.service_url,self.repository_uri,repository,self.tag_uri,tag],'/')
+        return requests.get(url).json
     
+    'GET /repository/{repository_name}/branches'
     def get_repository_branches(self,repository):
-        url = string.join(self.service_url,self.repository_uri,repository,self.branches_uri,'/')
-        return requests.get(url)
+        url = string.join([self.service_url,self.repository_uri,repository,self.branches_uri],'/')
+        return requests.get(url).json
     
+    'GET /repository/{repository_name}/branch/{branch_name}'
     def get_branch_commits(self,repository,branch):
-        url = string.join(self.service_url,self.repository_uri,repository,self.branch_uri,branch,'/')
-        return requests.get(url)
+        url = string.join([self.service_url,self.repository_uri,repository,self.branch_uri,branch],'/')
+        return requests.get(url).json
         
 if __name__ == '__main__':
     pass
