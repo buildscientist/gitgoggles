@@ -2,7 +2,7 @@
 Created on Jun 4, 2012
 
 @author: yelkalay
-@summary: Basic Python client demonstrating the GitGoggles Python libray capabilities. 
+@summary: Basic Python client demonstrating the GitGoggles Python library capabilities. 
 '''
 
 import pprint
